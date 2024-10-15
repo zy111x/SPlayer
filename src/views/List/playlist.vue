@@ -364,7 +364,7 @@ const handleOnlinePlaylist = async (id: number, getList: boolean, refresh: boole
     return;
   }
   // 如果已登录且歌曲数量少于 800，直接加载所有歌曲
-  if (isLogin() && (playlistDetailData.value?.count as number) < 800) {
+  if (isLogin() === 1 && (playlistDetailData.value?.count as number) < 800) {
     const ids: number[] = detail.privileges.map((song: any) => song.id as number);
     const result = await songDetail(ids);
     playlistData.value = formatSongsList(result.songs);
@@ -383,7 +383,7 @@ const getPlaylistAllSongs = async (
 ) => {
   loading.value = true;
   // 加载提示
-  loadingMsgShow(!refresh);
+  loadingMsgShow(!refresh, count);
   // 循环获取
   let offset: number = 0;
   const limit: number = 500;
@@ -415,8 +415,9 @@ const clearInput = () => {
 };
 
 // 加载提示
-const loadingMsgShow = (show: boolean = true) => {
+const loadingMsgShow = (show: boolean = true, count?: number) => {
   if (show) {
+    if (count && count <= 800) return;
     loadingMsg.value?.destroy();
     loadingMsg.value = window.$message.loading("该歌单歌曲数量过多，请稍等", {
       duration: 0,
